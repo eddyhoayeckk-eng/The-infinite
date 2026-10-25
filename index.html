@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17121f">
+<title>Lunaria — Moon Journal</title>
+<style>
+:root{--bg:#17121f;--panel:#241c30;--gold:#e5c98a;--cream:#f7f0e6;--muted:#b9aec5;--line:#453650}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--cream);font-family:Georgia,serif}
+header{text-align:center;padding:28px 16px 20px;border-bottom:1px solid var(--line)}
+.eyebrow{font:11px Arial;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+h1{font-size:34px;font-weight:normal;margin:12px 0}
+header p,.muted{color:var(--muted)}
+nav{display:flex;justify-content:center;gap:5px;position:sticky;top:0;background:var(--bg);padding:10px 3px;border-bottom:1px solid var(--line)}
+button{cursor:pointer}
+nav button{background:none;border:0;color:var(--muted);padding:12px 14px}
+nav button.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+main{max-width:620px;margin:auto;padding:18px 14px 40px}
+section{display:none}
+section.active{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:15px}
+.center{text-align:center}
+.moon{font-size:65px;margin:15px}
+h2,h3{font-weight:normal;color:var(--gold)}
+p{line-height:1.6}
+label{display:block;margin:14px 0 7px;color:var(--muted);font-size:13px}
+input,textarea,select{width:100%;padding:13px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--cream);font:15px Arial}
+textarea{min-height:140px}
+.primary{width:100%;margin-top:14px;padding:14px;border:0;border-radius:9px;background:var(--gold);color:#21182a;font-weight:bold}
+.secondary{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:none;color:var(--cream)}
+.entry{padding:14px 0;border-bottom:1px solid var(--line)}
+.entry p{white-space:pre-wrap;overflow-wrap:anywhere}
+a{color:var(--gold)}
+.newslink{display:block;padding:15px 0;border-bottom:1px solid var(--line);color:var(--cream);text-decoration:none}
+.newslink span{display:block;color:var(--muted);font:12px Arial;margin-top:6px}
+footer{text-align:center;color:var(--muted);padding:20px;font:11px Arial}
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">A celestial sanctuary</div>
+<h1>☾ Lunaria ☽</h1>
+<p>Your journal beneath the changing skies</p>
+</header>
+<nav>
+<button class="active" data-tab="today">Today</button>
+<button data-tab="journal">Journal</button>
+<button data-tab="fashion">Fashion</button>
+</nav>
+<main>
+<section id="today" class="active">
+<div class="card center">
+<div class="eyebrow">Your daily celestial note</div>
+<div class="moon">☾</div>
+<h2>The Moon & You</h2>
+<p id="date"></p>
+<p id="moonInfo">Your Moon sign and lunar phase will appear here after we connect a reliable astronomical source.</p>
+<p class="muted">Pause. Reflect. Set an intention.</p>
+</div>
+<div class="card">
+<h2>Today's intention</h2>
+<textarea id="intention" placeholder="Today, I choose to..."></textarea>
+<button class="primary" id="saveIntention">Save intention</button>
+<p id="intentionStatus" class="muted"></p>
+</div>
+</section>
+<section id="journal">
+<div class="card">
+<h2>Your private pages</h2>
+<p class="muted">Write about dreams, tarot readings, rituals, moods, or anything you want to remember.</p>
+<label for="title">Entry title</label>
+<input id="title" maxlength="100" placeholder="A thought beneath the moon">
+<label for="day">Date</label>
+<input id="day" type="date">
+<label for="mood">Mood</label>
+<select id="mood"><option>Reflective</option><option>Happy</option><option>Hopeful</option><option>Peaceful</option><option>Sad</option><option>Angry</option><option>Anxious</option><option>Inspired</option></select>
+<label for="words">Your entry</label>
+<textarea id="words" placeholder="Dear diary..."></textarea>
+<button class="primary" id="saveEntry">Save journal entry</button>
+<p id="status" class="muted"></p>
+</div>
+<div class="card"><h2>Past entries</h2><div id="entries"></div></div>
+</section>
+<section id="fashion">
+<div class="card">
+<div class="eyebrow">The fashion desk</div>
+<h2>Runways, ideas & culture</h2>
+<p>Explore these fashion publications. Automatic news updates are a future upgrade.</p>
+<a class="newslink" href="https://www.vogue.com/fashion" target="_blank" rel="noopener">Vogue — Fashion <span>Trends and editorial coverage ↗</span></a>
+<a class="newslink" href="https://www.businessoffashion.com/" target="_blank" rel="noopener">The Business of Fashion <span>Industry news and business ↗</span></a>
+<a class="newslink" href="https://wwd.com/" target="_blank" rel="noopener">WWD <span>Fashion industry reporting ↗</span></a>
+<a class="newslink" href="https://www.vogue.com/fashion-shows" target="_blank" rel="noopener">Vogue Runway <span>Runway shows and collections ↗</span></a>
+</div>
+</section>
+</main>
+<footer>Made beneath the moon · Lunaria</footer>
+<script>
+const $=id=>document.getElementById(id);
+const localDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+$("date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+$("day").value=localDate(new Date());
+function read(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
+function write(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{return false}}
+$("intention").value=read("lunaria-intention","");
+$("saveIntention").onclick=()=>{$("intentionStatus").textContent=write("lunaria-intention",$("intention").value)?"Intention saved on this device.":"Could not save. Check browser storage."};
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));
+document.querySelectorAll("main section").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));
+});
+let entries=read("lunaria-entries",[]);
+function render(){
+const root=$("entries");root.replaceChildren();
+if(!entries.length){const p=document.createElement("p");p.className="muted";p.textContent="Your first story is waiting.";root.append(p);return}
+[...entries].sort((a,b)=>b.day.localeCompare(a.day)).forEach(e=>{
+const art=document.createElement("article");art.className="entry";
+const h=document.createElement("h3");h.textContent=e.title||"Untitled entry";
+const meta=document.createElement("p");meta.className="muted";meta.textContent=e.day+" · "+e.mood;
+const p=document.createElement("p");p.textContent=e.words;
+const del=document.createElement("button");del.className="secondary";del.textContent="Delete entry";
+del.onclick=()=>{if(confirm("Delete this entry?")){entries=entries.filter(x=>x.id!==e.id);if(write("lunaria-entries",entries))render();else alert("Could not update storage.")}};
+art.append(h,meta,p,del);root.append(art);
+});
+}
+$("saveEntry").onclick=()=>{
+const words=$("words").value.trim();
+if(!words){$("status").textContent="Write something first.";return}
+const next=[...entries,{id:Date.now().toString(),title:$("title").value.trim(),day:$("day").value||localDate(new Date()),mood:$("mood").value,words}];
+if(!write("lunaria-entries",next)){$("status").textContent="Could not save. Check browser storage.";return}
+entries=next;$("title").value="";$("words").value="";$("status").textContent="Entry saved on this device.";render();
+};
+render();
+</script>
+</body>
+</html>
